@@ -242,6 +242,18 @@ async def LivrosVendidosPorLivrarias():
     return livrarias
 
 
+#GET ASSUNTO DOS LIVROS
+@app.get("/livrarias/livros/{assunto}", response_model=List[Livro_Out],status_code=status.HTTP_200_OK)
+async def SelecionaLivrarias(assunto:str):
+    """
+    - Retorna o resultado da busca por um determinado **assunto**
+    
+    """
+
+    assunto_livro = db.query(tabelas.Livro).options(joinedload(tabelas.Livro.detalhes)).filter(tabelas.Livro.assunto==assunto).all()
+
+    return assunto_livro
+
 
 #GET LIVRARIA NOME
 @app.get("/livraria/{nome}", response_model = Livrarias_Out, status_code=status.HTTP_200_OK)
@@ -263,7 +275,7 @@ async def deleta_livraria(nome:str):
     Após efetuar a busca de uma determinada **livraria** através de seu **nome**, esta função apaga registro existente no banco
     """
 
-    livraria_delete = db.query(tabelas.Livro).filter(tabelas.Livro.titulo==titulo).first()
+    livraria_delete = db.query(tabelas.Livrarias).filter(tabelas.Livrarias.nome==nome).first()
 
     if livraria_delete is None:
         print("\nRegistro não encontrado\n")
